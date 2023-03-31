@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Gerador de campos</title>
+	<script src="gerador_campos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+</head>
+<body>
+    <header>
+        
+    </header>
+    <main>
+        <input type="text" id="nome.cliente" name="nome.cliente" placeholder="Nome do cliente">
+        <br>
+        <br>
+        <input type="text" id="data" name="data" placeholder="Data da venda">
+        <br>
+        <br>
+        <button onclick="adicionarCampo()">Adicionar campo</button>
+        <div id="campos"></div>
+        <p>Valor total da compra: <span id="total"></span></p>
+        <button onclick="gerarPDF()">Gerar PDF</button>
+    </main>
+
+    <script>
+        //foramatar data
+        const dataInput = document.getElementById("data");
+        dataInput.addEventListener("input", function() {
+        const data = dataInput.value;
+        if (data.length === 2 || data.length === 5) {
+            dataInput.value += "/";
+        }
+        });
+
+        var contadorCampos = 1;
+
+        function adicionarCampo() {
+
+            // Cria elementos HTML para o novo campo
+            var novoCampo = document.createElement("div");
+            novoCampo.innerHTML = `
+            <br>
+                <p>Informações da venda:</p>
+                <input type="text" name="nome${contadorCampos}" id="nome${contadorCampos}" placeholder="Nome do produto"><br>
+                
+                <input type="number" name="preco${contadorCampos}" id="preco${contadorCampos}" onchange="atualizarTotal()" placeholder="Valor"><br>
+                
+                <input type="number" name="quantidade${contadorCampos}" id="quantidade${contadorCampos}" onchange="atualizarTotal()" placeholder="Quantidade"><br>
+            <br>
+            `;
+
+            // Adiciona o novo campo à div de campos
+            var divCampos = document.getElementById("campos");
+            divCampos.appendChild(novoCampo);
+
+            // Atualiza o contador de campos
+            contadorCampos++;
+        }
+
+        function atualizarTotal() {
+            var total = 0;
+
+            // Percorre todos os campos de preço e quantidade e calcula a soma total
+            for (var i = 1; i < contadorCampos; i++) {
+                var preco = parseFloat(document.getElementById("preco" + i).value);
+                var quantidade = parseInt(document.getElementById("quantidade" + i).value);
+
+                if (!isNaN(preco) && !isNaN(quantidade)) {
+                    total += preco * quantidade;
+                }
+            }
+
+            // Atualiza o valor total na página
+            document.getElementById("total").innerHTML = total.toFixed(2);
+        }
+
+        function gerarPDF() {
+            // Cria um novo documento PDF
+            var doc = new jsPDF();
+
+            // Adiciona os campos preenchidos ao PDF
+            for (var i = 1; i < contadorCampos; i++) {
+                var nome = document.getElementById("nome" + i).value;
+                var preco = parseFloat(document.getElementById("preco" + i).value);
+                var quantidade = parseInt(document.getElementById("quantidade" + i).value);
+
+                if (!isNaN(preco) && !isNaN(quantidade)) {
+                    doc.text(nome + " - R$ " + preco.toFixed(2) + " x " + quantidade + " unidades", 10, 60 + i * 10);
+                }
+            }
+
+            // Adiciona o valor total ao PDF
+            var total = parseFloat(document.getElementById("total").innerHTML);
+            doc.text("Total: R$ " + total.toFixed(2), 10, (contadorCampos + 10) * 10);
+
+            // Salva o documento PDF
+            doc.save("produtos.pdf");
+        }
+    </script>
+</body>
+</html>

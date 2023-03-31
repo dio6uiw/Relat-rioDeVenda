@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+</head>
+<body>
+        <label>Nome do cliente:</label><br>
+        <input type="text" id="nome.cliente" name="nome.cliente">
+        <br><br>
+
+        <label>Data da venda:</label><br>
+        <input type="text" id="data.venda" name="data.venda">
+        <br><br>
+
+        <button id="addProduto">Adicionar Produto</button>
+        <div id="produtos"></div>
+        <button id="gerarPDF">Gerar PDF</button>
+
+    <script>
+        var NomeCliente = document.getElementById("nome.cliente");
+
+        // Obtém o botão "Adicionar Produto" e a div que conterá os campos de entrada
+        const addProdutoBtn = document.getElementById('addProduto');
+        const produtosDiv = document.getElementById('produtos');
+
+        // Obtém o botão "Gerar PDF"
+        const gerarPDFBtn = document.getElementById('gerarPDF');
+
+        // Define um array para os produtos adicionados
+        const produtos = [];
+
+        // Adiciona um evento de clique ao botão "Adicionar Produto"
+        addProdutoBtn.addEventListener('click', () => {
+        // Cria um novo elemento div para conter os campos de entrada
+        const novoProdutoDiv = document.createElement('div');
+        novoProdutoDiv.classList.add('produto');
+
+        // Cria um campo de entrada para o nome do produto
+        const nomeInput = document.createElement('input');
+        nomeInput.type = 'text';
+        nomeInput.placeholder = 'Nome do Produto';
+        novoProdutoDiv.appendChild(nomeInput);
+
+        // Adiciona uma quebra de linha
+        novoProdutoDiv.appendChild(document.createElement('br'));
+
+
+        // Cria um campo de entrada para o preço do produto
+        const precoInput = document.createElement('input');
+        precoInput.type = 'number';
+        precoInput.placeholder = 'Preço do Produto';
+        novoProdutoDiv.appendChild(precoInput);
+
+        // Adiciona uma quebra de linha
+        novoProdutoDiv.appendChild(document.createElement('br'));
+
+        // Cria um campo de entrada para a quantidade do produto
+        const quantidadeInput = document.createElement('input');
+        quantidadeInput.type = 'number';
+        quantidadeInput.placeholder = 'Quantidade do Produto';
+        novoProdutoDiv.appendChild(quantidadeInput);
+
+        // Adiciona uma quebra de linha
+        novoProdutoDiv.appendChild(document.createElement('br'));
+        // Adiciona uma quebra de linha
+        novoProdutoDiv.appendChild(document.createElement('br'));
+
+        // Adiciona o novo elemento div à div produtos
+        produtosDiv.appendChild(novoProdutoDiv);
+        });
+
+        // Adiciona um evento de clique ao botão "Gerar PDF"
+        gerarPDFBtn.addEventListener('click', () => {
+        // Cria um novo objeto jsPDF
+        const pdf = new jsPDF();
+
+        // Loop através dos produtos adicionados e adiciona suas informações ao PDF
+        produtos.forEach((produto, index) => {
+            pdf.text(`Produto ${index + 1}: ${produto.nome} | Preço: R$${produto.preco} | Quantidade: ${produto.quantidade}`, 10, 10 + (index * 10));
+        });
+
+        // Salva o PDF
+        pdf.save('Nota de venda.pdf');
+        });
+
+        // Adiciona um evento de mudança a todos os campos de entrada de produto
+        produtosDiv.addEventListener('change', (event) => {
+        const produtoDiv = event.target.closest('.produto');
+
+        if (produtoDiv) {
+            // Obtém o índice do produto atual
+            const produtoIndex = Array.from(produtosDiv.children).indexOf(produtoDiv);
+
+            // Atualiza as informações do produto no array
+            produtos[produtoIndex] = {
+            nome: produtoDiv.querySelector('input[type="text"]').value,
+            preco: produtoDiv.querySelector('input[type="number"]').value,
+            quantidade: produtoDiv.querySelector('input[type="number"]:last-of-type').value
+            };
+        }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="gerarRelatorio.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+</head>
+<body>
+    <h1>LEVANTAMENTO DE RISCOS</h1>
+    <form>
+        <label>Nome do cliente:</label><br>
+        <input type="text" id="nome.cliente" name="nome.cliente">
+        <br><br>
+
+        <label>Data da venda:</label><br>
+        <input type="text" id="data.venda" name="data.venda">
+        <br><br>
+
+        <div id="inputContainer"></div>
+        <button type="button" onclick="addInput()">Criar campo</button>
+        <button type="button" onclick="generatePDF()">Gerar PDF</button>
+    </form>
+    
+        <script>
+            // JavaScript
+            var inputCount = 0;
+
+            function addInput() {
+            var inputContainer = document.getElementById("inputContainer");
+            
+            // criar um novo contêiner para o novo campo de entrada
+            var newDiv = document.createElement("div");
+
+            // criar o novo campo de entrada
+            var inputElement = document.createElement("input");
+            inputElement.type = "text";
+            inputElement.name = "novoCampo";
+            inputElement.id = "Produto" + inputCount;
+            
+            // adicionar o campo de entrada ao contêiner
+            inputContainer.appendChild(inputElement);
+            
+            // adicionar uma quebra de linha após o campo de entrada
+            var lineBreak = document.createElement("br");
+            inputContainer.appendChild(lineBreak);
+            
+            // incrementar o contador de campos criados
+            inputCount++;
+            }
+
+            function generatePDF() {
+            // criar um novo documento PDF
+            var doc = new jsPDF();
+            
+            // obter todos os campos de entrada criados
+            var inputElements = document.querySelectorAll("input[name='novoCampo']");
+            
+            // percorrer todos os campos de entrada e adicionar ao PDF
+            inputElements.forEach(function(element, index) {
+                var inputName = element.value;
+                var inputId = element.id;
+                var yPos = (index + 1) * 20; // posicionar cada campo abaixo do anterior
+                
+                // adicionar o nome e o id do campo ao PDF
+                doc.text("Produto: " + inputName, 20, yPos);
+            });
+            
+            // salvar o PDF
+            doc.save("campos.pdf");
+            }
+        </script>
+</body>
+</html>
