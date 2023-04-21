@@ -4,10 +4,11 @@
 	<title>Gerador de campos</title>
 	<script src="gerador_campos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        
+            <h1>NOTA DE VENDAS</h1>
     </header>
     <main>
         <input type="text" id="nome.cliente" name="nome.cliente" placeholder="Nome do cliente">
@@ -16,10 +17,12 @@
         <input type="text" id="data" name="data" placeholder="Data da venda">
         <br>
         <br>
-        <button onclick="adicionarCampo()">Adicionar campo</button>
+        <button onclick="adicionarCampo()">Adicionar produto</button>
         <div id="campos"></div>
-        <p>Valor total da compra: <span id="total"></span></p>
-        <button onclick="gerarPDF()">Gerar PDF</button>
+        <p></b>Valor total da compra: <span id="total"></span></b></p>
+
+        <a href="notaDePagamento.html"><button>Gerar pagamento</button></a><br>
+        <button onclick="gerarPDF()">Gerar venda</button>
     </main>
 
     <script>
@@ -40,10 +43,10 @@
             var novoCampo = document.createElement("div");
             novoCampo.innerHTML = `
             <br>
-                <p>Informações da venda:</p>
+                <p>Informações do produto:</p>
                 <input type="text" name="nome${contadorCampos}" id="nome${contadorCampos}" placeholder="Nome do produto"><br>
                 
-                <input type="number" name="preco${contadorCampos}" id="preco${contadorCampos}" onchange="atualizarTotal()" placeholder="Valor"><br>
+                <input type="text" name="preco${contadorCampos}" id="preco${contadorCampos}" onchange="atualizarTotal()" placeholder="Valor"><br>
                 
                 <input type="number" name="quantidade${contadorCampos}" id="quantidade${contadorCampos}" onchange="atualizarTotal()" placeholder="Quantidade"><br>
             <br>
@@ -77,6 +80,22 @@
         function gerarPDF() {
             // Cria um novo documento PDF
             var doc = new jsPDF();
+
+            var pageWidth = doc.internal.pageSize.width;
+            var pageHeight = doc.internal.pageSize.height;
+
+            var squareX = 10;
+            var squareY = 140;
+            var squareWidth = pageWidth - 20;
+            var squareHeight = pageHeight - 200;
+
+            doc.setFillColor(211, 211, 211); // Define a cor do fundo cinza
+            doc.setDrawColor(0); // Define a cor da borda como transparente
+            doc.roundedRect(squareX, squareY, squareWidth, squareHeight, 2, 2, 'FD'); // 'FD' é o estilo de preenchimento e traço do retângulo
+
+            const imgData = 'VENDAS/logo.png';
+            doc.addImage(imgData, 'PNG', 10, 10, 50, 50);
+
 
             // Adiciona os campos preenchidos ao PDF
             for (var i = 1; i < contadorCampos; i++) {

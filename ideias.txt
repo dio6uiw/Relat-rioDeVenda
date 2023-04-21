@@ -1,0 +1,2 @@
+colocar no formulario de vendas a forma de pagamento e um botão para direcionar a pagina de pagamento.
+
